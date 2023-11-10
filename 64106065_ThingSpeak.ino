@@ -5,11 +5,11 @@
 
 float temperature;
 float humidity;
-DHT dht14(D4, DHT11);
+DHT HT(D4, DHT11);
 
 const char* writeKey = "CH3GIV5DQEA4SDNR";
 unsigned long channelID = 2340468;
-unsigned long timeDelay = 15000;
+unsigned long timeDelay = 25000;
 
 WiFiClient client;
 
@@ -31,15 +31,15 @@ void init_wifi(String ssid, String password) {
 void setup() {
   Serial.begin(9600);
   init_wifi("SivannaCL", "sushiluckyto");
-  dht14.begin();
+  HT.begin();
   temperature = 0;
   humidity = 0;
   ThingSpeak.begin(client);
 }
 
 void getSensor() {
-  humidity = (dht14.readHumidity());
-  temperature = (dht14.readTemperature());
+  humidity = (HT.readHumidity());
+  temperature = (HT.readTemperature());
   ThingSpeak.setField(1, humidity);
   ThingSpeak.setField(2, temperature);
 }
