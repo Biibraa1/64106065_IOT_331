@@ -6,7 +6,7 @@
 float temperature;
 float humidity;
 DHT HT(D4, DHT11);
-const char* WK = "CH3GIV5DQEA4SDNR";
+const char* wKey = "CH3GIV5DQEA4SDNR";
 unsigned long channelID = 2340468;
 unsigned long timeDelay = 25000;
 WiFiClient client;
@@ -44,7 +44,7 @@ void getSensor() {
 
 void loop() {
   getSensor();
-  int x = ThingSpeak.writeFields(channelID, WK);
+  int x = ThingSpeak.writeFields(channelID, wKey);
   if (x == 200) {
     Serial.println("Sent humidity and temperature to ThingSpeak");
   } else {
