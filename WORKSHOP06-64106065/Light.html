@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.2.2/mqtt.min.js"
+        integrity="sha512-I8gBERqrEkyDqbjHj3aymzBVIPFs85vGSzy26+1P5weHzFp8vfJ8dARJz51n3oQ80DTdYn8MbhUiz5UAW2rMxw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>LED Control</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #FFECB3;
+            border: 10px solid #F6C8B6;
+            padding: 200px;
+            border-radius: 50px;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .status {
+            font-size: 35px;
+        }
+
+        .led-status {
+            display: flex;
+            justify-content: center;
+            font-size: 26;
+        }
+
+        form {
+            margin: 0 10px;
+        }
+
+        #ledButton {
+            font-size: 22px;
+            padding: 30px 30px; 
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>LED Control</h1>
+        <div class="led-status">
+            <p class="status">LED Status: <span id="ledStatus">Off</span></p>
+        </div>
+        <button type="button" id="ledButton" onclick="toggleLED()">ON/OFF</button>
+    </div>
+
+    <script>
+        const client = mqtt.connect("mqtt://192.168.245.253:8888");
+        let isLedOn = false;
+    
+        client.on("connect", () => {
+            client.subscribe("led_control", (err) => {
+                if (!err) {
+                    client.publish("led_control", isLedOn ? "ON" : "OFF");
+                }
+            });
+        });
+    
+        client.on("message", (topic, message) => {
+            console.log(message.toString());
+            updateLedStatus(message.toString());
+        });
+    
+        function toggleLED() {
+            isLedOn = !isLedOn;
+            client.publish("led_control", isLedOn ? "ON" : "OFF");5
+            updateLedStatus(isLedOn ? "ON" : "OFF");
+        }
+    
+        function updateLedStatus(status) {
+            var ledStatusElement = document.getElementById('ledStatus');
+            ledStatusElement.textContent = status === "ON" ? "On" : "Off";
+            
+            ledStatusElement.style.color = status === "ON" ? "green" : "red";
+        }
+    </script>    
+</body>
+
+</html>
